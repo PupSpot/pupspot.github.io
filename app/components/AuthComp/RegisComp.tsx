@@ -3,7 +3,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import clsx from 'clsx';
 import { useState } from 'react';
-import { Modal,ModalBody,ModalContent,ModalTrigger } from '../ui/animated-modal';
+import { Modal,ModalBody,ModalContent,ModalTrigger } from '../../../components/ui/animated-modal';
 
 const validationSchema = Yup.object({
   email: Yup.string()

@@ -1,5 +1,5 @@
 "use client"
-import { Modal, ModalContent, ModalBody, ModalTrigger } from "../ui/animated-modal"
+import { Modal, ModalContent, ModalBody, ModalTrigger } from "../../../components/ui/animated-modal"
 import { useState } from 'react';
 import clsx from 'clsx';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
