@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Mail, Lock, User, Chrome } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import Image from "next/image";
 
 interface LoginFormState {
     email: string;
@@ -308,7 +309,7 @@ const AuthPages = () => {
             <Card className="w-full max-w-md">
                 <CardHeader className="text-center">
                     <div className="flex items-center justify-center mb-2">
-                        <img
+                        <Image
                             src="/favicon.webp"
                             alt="PupSpot Logo"
                             className="h-8 w-8"

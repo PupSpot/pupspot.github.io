@@ -10,6 +10,7 @@ import { Camera, ArrowLeft } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import Image from "next/image";
 
 interface PetFormState {
     name: string;
@@ -143,7 +144,7 @@ const AddPetPage: React.FC = () => {
                                 <div className="relative">
                                     <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center border-2 border-dashed border-gray-300">
                                         {petPhoto ? (
-                                            <img
+                                            <Image
                                                 src={petPhoto}
                                                 alt="Pet preview"
                                                 className="w-full h-full rounded-full object-cover"
@@ -179,7 +180,7 @@ const AddPetPage: React.FC = () => {
                             {/* Basic Information */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="name">Pet's Name*</Label>
+                                    <Label htmlFor="name">Pet&#39;s Name*</Label>
                                     <Input
                                         id="name"
                                         name="name"
