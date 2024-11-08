@@ -29,15 +29,16 @@ interface FormErrors {
     confirmPassword?: string;
 }
 
-// Moved forms outside main component and memoized them
-const LoginForm = memo(({
-                            form,
-                            errors,
-                            isLoading,
-                            onSubmit,
-                            onChange,
-                            onGoogleLogin
-                        }) => (
+interface FormProps<T> {
+    form: T;
+    errors: FormErrors;
+    isLoading: boolean;
+    onSubmit: (e: React.FormEvent) => Promise<void>;
+    onChange: (field: keyof T, value: string) => void;
+    onGoogleLogin: () => Promise<void>;
+}
+
+const LoginForm = memo(({ form, errors, isLoading, onSubmit, onChange, onGoogleLogin }: FormProps<LoginFormState>) => (
     <form onSubmit={onSubmit} className="space-y-4">
         <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
@@ -103,14 +104,7 @@ const LoginForm = memo(({
     </form>
 ));
 
-const SignupForm = memo(({
-                             form,
-                             errors,
-                             isLoading,
-                             onSubmit,
-                             onChange,
-                             onGoogleLogin
-                         }) => (
+const SignupForm = memo(({ form, errors, isLoading, onSubmit, onChange, onGoogleLogin }: FormProps<SignupFormState>) => (
     <form onSubmit={onSubmit} className="space-y-4">
         <div className="space-y-2">
             <Label htmlFor="fullName">Full Name</Label>
