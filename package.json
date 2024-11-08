@@ -9,18 +9,24 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
+    "formik": "^2.4.6",
+    "framer-motion": "^11.11.11",
+    "next": "14.2.17",
+    "ol": "^10.2.1",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.17"
+    "tailwind-merge": "^2.5.4",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.17",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.17"
+    "typescript": "^5"
   }
 }
