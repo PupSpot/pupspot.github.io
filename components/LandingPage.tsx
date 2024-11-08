@@ -58,7 +58,7 @@ const Navigation = () => {
                         <Link href="/community" className="text-gray-600 hover:text-blue-600 transition-colors">
                             Community
                         </Link>
-                        <Link href="/signin">
+                        <Link href="/authentication">
                             <Button className="bg-blue-600 hover:bg-blue-700">
                                 Sign In
                             </Button>
@@ -188,7 +188,7 @@ const FeaturesSection = () => (
                             icon: <PawPrint className="h-8 w-8 text-blue-500" />,
                             title: "Pet Profiles",
                             description: "Create profiles for your dogs and share their adventures",
-                            link: "/profiles"
+                            link: "/pets"
                         }
                     ].map((feature, index) => (
                         <motion.div
@@ -263,7 +263,7 @@ const Footer = () => (
                 <div>
                     <h4 className="text-white font-semibold mb-4">Features</h4>
                     <ul className="space-y-2 text-sm">
-                        <li><Link href="/parks" className="hover:text-blue-400">Find Dog Parks</Link></li>
+                        <li><Link href="/discover" className="hover:text-blue-400">Find Dog Parks</Link></li>
                         <li><Link href="/places" className="hover:text-blue-400">Pet-friendly Places</Link></li>
                         <li><Link href="/events" className="hover:text-blue-400">Dog Events</Link></li>
                         <li><Link href="/community" className="hover:text-blue-400">Community</Link></li>
