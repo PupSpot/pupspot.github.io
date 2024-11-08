@@ -38,6 +38,7 @@ interface FormProps<T> {
     onGoogleLogin: () => Promise<void>;
 }
 
+// eslint-disable-next-line react/display-name
 const LoginForm = memo(({ form, errors, isLoading, onSubmit, onChange, onGoogleLogin }: FormProps<LoginFormState>) => (
     <form onSubmit={onSubmit} className="space-y-4">
         <div className="space-y-2">
@@ -104,6 +105,7 @@ const LoginForm = memo(({ form, errors, isLoading, onSubmit, onChange, onGoogleL
     </form>
 ));
 
+// eslint-disable-next-line react/display-name
 const SignupForm = memo(({ form, errors, isLoading, onSubmit, onChange, onGoogleLogin }: FormProps<SignupFormState>) => (
     <form onSubmit={onSubmit} className="space-y-4">
         <div className="space-y-2">
