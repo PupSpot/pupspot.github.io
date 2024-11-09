@@ -237,10 +237,11 @@ const CTASection = () => (
             </motion.p>
             <motion.div variants={fadeIn}>
                 <motion.div whileHover={{scale: 1.05}} whileTap={{scale: 0.95}}>
-                    <Button size="lg"
-                            className="bg-white text-blue-600 hover:bg-blue-50">
-                        Sign Up Now <ChevronRight className="ml-2 h-4 w-4"/>
-                    </Button>
+                    <Link href="/authentication">
+                        <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
+                            Sign Up Now <ChevronRight className="ml-2 h-4 w-4" />
+                        </Button>
+                    </Link>
                 </motion.div>
             </motion.div>
         </motion.div>
