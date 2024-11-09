@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# [PupSpot](https://pupspot.github.io/)
+![PupSpot](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDFlZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1wYXctcHJpbnQiPjxjaXJjbGUgY3g9IjExIiBjeT0iNCIgcj0iMiIvPjxjaXJjbGUgY3g9IjE4IiBjeT0iOCIgcj0iMiIvPjxjaXJjbGUgY3g9IjIwIiBjeT0iMTYiIHI9IjIiLz48cGF0aCBkPSJNOSAxMGE1IDUgMCAwIDEgNSA1djMuNWEzLjUgMy41IDAgMCAxLTYuODQgMS4wNDVRNi41MiAxNy40OCA0LjQ2IDE2Ljg0QTMuNSAzLjUgMCAwIDEgNS41IDEwWiIvPjwvc3ZnPg==)
 
-First, run the development server:
+## Welcome to PupSpot! 🐾 
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+PupSpot helps dog lovers find popular, user-reported spots for dogs to meet up, play, and socialize. View a map of top dog-friendly locations and connect with fellow pet owners nearby.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Core Features include 
+ - Map with Pet-Friendly Spots
+ - Pet Profiles
+ - Event and Meetup Creation
+ - Photo Albums and Media Sharing
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+PupSpot addresses this need by providing a community-driven platform where users can discover dog-friendly spots tailored to their preferences. Using a user-reported map, PupSpot allows owners to find various locations—from quieter, lesser-known parks with smaller groups to more active spots for social dogs. This flexibility lets users choose environments that align with their dog’s personality and comfort level.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## PupSpot Components
 
-## Learn More
+- [PupSpot Frontend](https://github.com/PupSpot/pupspot.github.io)
+- [PupSpot Backend](https://github.com/PupSpot/pupspot-django) 
 
-To learn more about Next.js, take a look at the following resources:
+## Installation Steps
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Clone this repository**
+   ```bash
+   git clone https://github.com/PupSpot/pupspot.github.io.git
+   ```
+2. **Install Packages**
+   ```bash
+    npm run dev
+    # or
+    yarn dev
+    # or
+    pnpm dev
+    # or
+    bun dev
+    ```
+3. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+   
