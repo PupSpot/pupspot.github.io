@@ -236,14 +236,12 @@ const CTASection = () => (
                 Start connecting with dog lovers in your area and create pawsome memories!
             </motion.p>
             <motion.div variants={fadeIn}>
-                <Button
-                    size="lg"
-                    className="bg-white text-blue-600 hover:bg-blue-50"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                >
-                    Sign Up Now <ChevronRight className="ml-2 h-4 w-4" />
-                </Button>
+                <motion.div whileHover={{scale: 1.05}} whileTap={{scale: 0.95}}>
+                    <Button size="lg"
+                            className="bg-white text-blue-600 hover:bg-blue-50">
+                        Sign Up Now <ChevronRight className="ml-2 h-4 w-4"/>
+                    </Button>
+                </motion.div>
             </motion.div>
         </motion.div>
     </div>
