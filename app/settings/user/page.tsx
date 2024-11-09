@@ -118,7 +118,7 @@ const ProfileSettingsPage: React.FC = () => {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-2xl font-bold text-blue-600">Change your profile information :</CardTitle>
+                        <CardTitle className="text-2xl font-bold text-blue-600">Change Your Profile Information :</CardTitle>
                     </CardHeader>
                     <CardContent>
                         {error && (
