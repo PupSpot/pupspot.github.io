@@ -1,44 +1,13 @@
-name: Deploy Next.js site to GitHub Pages
+name: Deploy # Make sure there's a name
 
 on:
   push:
     branches:
-      - "*"
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+      - "*" # This should catch all branches
 
 jobs:
-  build:
+  test-trigger: # Simple test job
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build Next.js app
-        run: npm run build
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: "./out"
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    steps:
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+      - name: Test Step
+        run: echo "This workflow was triggered"
