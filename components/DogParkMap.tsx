@@ -80,6 +80,36 @@ const DogParkMap: React.FC = () => {
         user: google.maps.Symbol | null;
         dogPark: google.maps.Symbol | null;
     }>({ user: null, dogPark: null });
+    const [searchInput, setSearchInput] = useState('');
+    const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+
+    const handleLocationSearch = useCallback((map: google.maps.Map) => {
+        if (!window.google) return;
+
+        const input = document.getElementById('location-search') as HTMLInputElement;
+        const autocomplete = new google.maps.places.Autocomplete(input, {
+            types: ['geocode']
+        });
+
+        autocompleteRef.current = autocomplete;
+
+        autocomplete.addListener('place_changed', () => {
+            const place = autocomplete.getPlace();
+
+            if (!place.geometry?.location) return;
+
+            const newLocation = {
+                lat: place.geometry.location.lat(),
+                lng: place.geometry.location.lng()
+            };
+
+            if (mapRef.current) {
+                mapRef.current.panTo(newLocation);
+                mapRef.current.setZoom(DEFAULT_ZOOM);
+            }
+        });
+    }, []);
+
 
     const formatOpeningHours = useCallback((park: DogPark) => {
         if (!park.openingHours) return 'Hours not available';
@@ -311,14 +341,13 @@ const DogParkMap: React.FC = () => {
     const onMapLoad = useCallback((map: google.maps.Map) => {
         mapRef.current = map;
         initializeMarkerIcons();
+        handleLocationSearch(map);
         if (userLocation && !initialLocationSet) {
             map.panTo(userLocation);
             setInitialLocationSet(true);
         }
         debouncedFetchDogParks(map);
-    }, [userLocation, initialLocationSet, debouncedFetchDogParks, initializeMarkerIcons]);
-
-
+    }, [userLocation, initialLocationSet, debouncedFetchDogParks, initializeMarkerIcons, handleLocationSearch]);
 
     const renderReviews = (park: DogPark) => (
         <Dialog open={showReviewsDialog} onOpenChange={setShowReviewsDialog}>
@@ -359,6 +388,19 @@ const DogParkMap: React.FC = () => {
             <Card className={`p-4 bg-white shadow-md ${isFullScreen ? 'fixed top-0 left-0 right-0 z-10' : ''}`}>
                 <div className="flex flex-wrap gap-4 items-center justify-between">
                     <div className="flex gap-2 flex-wrap">
+                        <div className="flex-1 min-w-[250px]">
+                            <div className="relative">
+                                <MapPin className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
+                                <Input
+                                    id="location-search"
+                                    type="text"
+                                    placeholder="Search by location..."
+                                    value={searchInput}
+                                    onChange={(e) => setSearchInput(e.target.value)}
+                                    className="pl-8"
+                                />
+                            </div>
+                        </div>
                         <Button
                             onClick={centerOnUser}
                             disabled={!userLocation}
