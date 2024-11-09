@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, memo } from 'react';
+import React, { useState, useCallback, memo, forwardRef } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Mail, Lock, User, Chrome } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import Image from "next/image";
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface LoginFormState {
     email: string;
@@ -39,175 +40,188 @@ interface FormProps<T> {
     onGoogleLogin: () => Promise<void>;
 }
 
-// eslint-disable-next-line react/display-name
+const fadeIn = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 }
+};
+
+const staggerChildren = {
+    animate: {
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+};
+
+const FormField = forwardRef<HTMLDivElement, { label: string; icon: React.ComponentType<any>; error?: string } & React.InputHTMLAttributes<HTMLInputElement>>(({ label, icon: Icon, error, ...props }, ref) => (
+    <motion.div className="space-y-2" variants={fadeIn} ref={ref}>
+        <Label htmlFor={props.id}>{label}</Label>
+        <div className="relative">
+            <Icon className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+            <Input className="pl-8" {...props} />
+        </div>
+        {error && (
+            <motion.p
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="text-sm text-red-500"
+            >
+                {error}
+            </motion.p>
+        )}
+    </motion.div>
+));
+FormField.displayName = 'FormField';
+
 const LoginForm = memo(({ form, errors, isLoading, onSubmit, onChange, onGoogleLogin }: FormProps<LoginFormState>) => (
-    <form onSubmit={onSubmit} className="space-y-4">
-        <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <div className="relative">
-                <Mail className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-                <Input
-                    id="email"
-                    type="email"
-                    placeholder="bark@pupspot.com"
-                    className="pl-8"
-                    value={form.email}
-                    onChange={(e) => onChange('email', e.target.value)}
-                />
-            </div>
-            {errors.email && (
-                <p className="text-sm text-red-500">{errors.email}</p>
-            )}
-        </div>
+    <motion.form
+        onSubmit={onSubmit}
+        className="space-y-4"
+        variants={staggerChildren}
+        initial="initial"
+        animate="animate"
+    >
+        <FormField
+            label="Email"
+            icon={Mail}
+            id="email"
+            type="email"
+            placeholder="bark@pupspot.com"
+            value={form.email}
+            onChange={(e) => onChange('email', (e.target as HTMLInputElement).value)}
+            error={errors.email}
+        />
 
-        <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <div className="relative">
-                <Lock className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-                <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    className="pl-8"
-                    value={form.password}
-                    onChange={(e) => onChange('password', e.target.value)}
-                />
-            </div>
-            {errors.password && (
-                <p className="text-sm text-red-500">{errors.password}</p>
-            )}
-        </div>
+        <FormField
+            label="Password"
+            icon={Lock}
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            value={form.password}
+            onChange={(e) => onChange('password', (e.target as HTMLInputElement).value)}
+            error={errors.password}
+        />
 
-        <Button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700"
-            disabled={isLoading}
-        >
-            {isLoading ? 'Logging in...' : 'Login'}
-        </Button>
+        <motion.div variants={fadeIn}>
+            <Button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                disabled={isLoading}
+            >
+                {isLoading ? 'Logging in...' : 'Login'}
+            </Button>
+        </motion.div>
 
-        <div className="relative my-4">
+        <motion.div className="relative my-4" variants={fadeIn}>
             <Separator />
             <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-gray-500 text-sm">
                 or continue with
             </span>
-        </div>
+        </motion.div>
 
-        <Button
-            type="button"
-            variant="outline"
-            onClick={onGoogleLogin}
-            disabled={isLoading}
-            className="w-full"
-        >
-            <Chrome className="mr-2 h-4 w-4" />
-            Continue with Google
-        </Button>
-    </form>
+        <motion.div variants={fadeIn}>
+            <Button
+                type="button"
+                variant="outline"
+                onClick={onGoogleLogin}
+                disabled={isLoading}
+                className="w-full"
+            >
+                <Chrome className="mr-2 h-4 w-4" />
+                Continue with Google
+            </Button>
+        </motion.div>
+    </motion.form>
 ));
+LoginForm.displayName = 'LoginForm';
 
-// eslint-disable-next-line react/display-name
 const SignupForm = memo(({ form, errors, isLoading, onSubmit, onChange, onGoogleLogin }: FormProps<SignupFormState>) => (
-    <form onSubmit={onSubmit} className="space-y-4">
-        <div className="space-y-2">
-            <Label htmlFor="fullName">Full Name</Label>
-            <div className="relative">
-                <User className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-                <Input
-                    id="fullName"
-                    type="text"
-                    placeholder="John Doe"
-                    className="pl-8"
-                    value={form.fullName}
-                    onChange={(e) => onChange('fullName', e.target.value)}
-                />
-            </div>
-            {errors.fullName && (
-                <p className="text-sm text-red-500">{errors.fullName}</p>
-            )}
-        </div>
+    <motion.form
+        onSubmit={onSubmit}
+        className="space-y-4"
+        variants={staggerChildren}
+        initial="initial"
+        animate="animate"
+    >
+        <FormField
+            label="Full Name"
+            icon={User}
+            id="fullName"
+            type="text"
+            placeholder="John Doe"
+            value={form.fullName}
+            onChange={(e) => onChange('fullName', (e.target as HTMLInputElement).value)}
+            error={errors.fullName}
+        />
 
-        <div className="space-y-2">
-            <Label htmlFor="signupEmail">Email</Label>
-            <div className="relative">
-                <Mail className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-                <Input
-                    id="signupEmail"
-                    type="email"
-                    placeholder="bark@pupspot.com"
-                    className="pl-8"
-                    value={form.email}
-                    onChange={(e) => onChange('email', e.target.value)}
-                />
-            </div>
-            {errors.email && (
-                <p className="text-sm text-red-500">{errors.email}</p>
-            )}
-        </div>
+        <FormField
+            label="Email"
+            icon={Mail}
+            id="signupEmail"
+            type="email"
+            placeholder="bark@pupspot.com"
+            value={form.email}
+            onChange={(e) => onChange('email', (e.target as HTMLInputElement).value)}
+            error={errors.email}
+        />
 
-        <div className="space-y-2">
-            <Label htmlFor="signupPassword">Password</Label>
-            <div className="relative">
-                <Lock className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-                <Input
-                    id="signupPassword"
-                    type="password"
-                    placeholder="••••••••"
-                    className="pl-8"
-                    value={form.password}
-                    onChange={(e) => onChange('password', e.target.value)}
-                />
-            </div>
-            {errors.password && (
-                <p className="text-sm text-red-500">{errors.password}</p>
-            )}
-        </div>
+        <FormField
+            label="Password"
+            icon={Lock}
+            id="signupPassword"
+            type="password"
+            placeholder="••••••••"
+            value={form.password}
+            onChange={(e) => onChange('password', (e.target as HTMLInputElement).value)}
+            error={errors.password}
+        />
 
-        <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
-            <div className="relative">
-                <Lock className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-                <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="••••••••"
-                    className="pl-8"
-                    value={form.confirmPassword}
-                    onChange={(e) => onChange('confirmPassword', e.target.value)}
-                />
-            </div>
-            {errors.confirmPassword && (
-                <p className="text-sm text-red-500">{errors.confirmPassword}</p>
-            )}
-        </div>
+        <FormField
+            label="Confirm Password"
+            icon={Lock}
+            id="confirmPassword"
+            type="password"
+            placeholder="••••••••"
+            value={form.confirmPassword}
+            onChange={(e) => onChange('confirmPassword', (e.target as HTMLInputElement).value)}
+            error={errors.confirmPassword}
+        />
 
-        <Button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700"
-            disabled={isLoading}
-        >
-            {isLoading ? 'Creating Account...' : 'Create Account'}
-        </Button>
+        <motion.div variants={fadeIn}>
+            <Button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                disabled={isLoading}
+            >
+                {isLoading ? 'Creating Account...' : 'Create Account'}
+            </Button>
+        </motion.div>
 
-        <div className="relative my-4">
+        <motion.div className="relative my-4" variants={fadeIn}>
             <Separator />
             <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-gray-500 text-sm">
                 or continue with
             </span>
-        </div>
+        </motion.div>
 
-        <Button
-            type="button"
-            variant="outline"
-            onClick={onGoogleLogin}
-            disabled={isLoading}
-            className="w-full"
-        >
-            <Chrome className="mr-2 h-4 w-4" />
-            Continue with Google
-        </Button>
-    </form>
+        <motion.div variants={fadeIn}>
+            <Button
+                type="button"
+                variant="outline"
+                onClick={onGoogleLogin}
+                disabled={isLoading}
+                className="w-full"
+            >
+                <Chrome className="mr-2 h-4 w-4" />
+                Continue with Google
+            </Button>
+        </motion.div>
+    </motion.form>
 ));
+SignupForm.displayName = 'SignupForm';
 
 const AuthPages = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -305,10 +319,20 @@ const AuthPages = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <motion.div
+            className="min-h-screen bg-gray-50 flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+        >
             <Card className="w-full max-w-md">
                 <CardHeader className="text-center">
-                    <div className="flex items-center justify-center mb-2">
+                    <motion.div
+                        className="flex items-center justify-center mb-2"
+                        initial={{ scale: 0.5, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ type: "spring", duration: 0.8 }}
+                    >
                         <Image
                             src="/pawicon.png"
                             width={50}
@@ -316,45 +340,63 @@ const AuthPages = () => {
                             alt="PupSpot Logo"
                             className="h-8 w-8"
                         />
-                    </div>
-                    <CardTitle className="text-2xl font-bold text-blue-600">PupSpot</CardTitle>
-                    <p className="text-gray-600">The Social Platform for Dogs 🐶</p>
+                    </motion.div>
+                    <motion.div
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                    >
+                        <CardTitle className="text-2xl font-bold text-blue-600">PupSpot</CardTitle>
+                        <p className="text-gray-600">The Social Platform for Dogs 🐶</p>
+                    </motion.div>
                 </CardHeader>
                 <CardContent>
-                    {error && (
-                        <Alert variant="destructive" className="mb-4">
-                            <AlertDescription>{error}</AlertDescription>
-                        </Alert>
-                    )}
+                    <AnimatePresence mode="wait">
+                        {error && (
+                            <motion.div
+                                key="error"
+                                initial={{ opacity: 0, y: -20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                className="mb-4"
+                            >
+                                <Alert variant="destructive">
+                                    <AlertDescription>{error}</AlertDescription>
+                                </Alert>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                     <Tabs defaultValue="login" className="space-y-4">
                         <TabsList className="grid grid-cols-2 w-full">
                             <TabsTrigger value="login">Login</TabsTrigger>
                             <TabsTrigger value="signup">Sign Up</TabsTrigger>
                         </TabsList>
-                        <TabsContent value="login">
-                            <LoginForm
-                                form={loginForm}
-                                errors={loginErrors}
-                                isLoading={isLoading}
-                                onSubmit={handleLoginSubmit}
-                                onChange={handleLoginChange}
-                                onGoogleLogin={handleGoogleLogin}
-                            />
-                        </TabsContent>
-                        <TabsContent value="signup">
-                            <SignupForm
-                                form={signupForm}
-                                errors={signupErrors}
-                                isLoading={isLoading}
-                                onSubmit={handleSignupSubmit}
-                                onChange={handleSignupChange}
-                                onGoogleLogin={handleGoogleLogin}
-                            />
-                        </TabsContent>
+                        <AnimatePresence mode="wait">
+                            <TabsContent value="login">
+                                <LoginForm
+                                    form={loginForm}
+                                    errors={loginErrors}
+                                    isLoading={isLoading}
+                                    onSubmit={handleLoginSubmit}
+                                    onChange={handleLoginChange}
+                                    onGoogleLogin={handleGoogleLogin}
+                                />
+                            </TabsContent>
+                            <TabsContent value="signup">
+                                <SignupForm
+                                    form={signupForm}
+                                    errors={signupErrors}
+                                    isLoading={isLoading}
+                                    onSubmit={handleSignupSubmit}
+                                    onChange={handleSignupChange}
+                                    onGoogleLogin={handleGoogleLogin}
+                                />
+                            </TabsContent>
+                        </AnimatePresence>
                     </Tabs>
                 </CardContent>
             </Card>
-        </div>
+        </motion.div>
     );
 };
 
