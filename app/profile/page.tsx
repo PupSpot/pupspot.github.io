@@ -81,19 +81,19 @@ const ProfilePage: React.FC = () => {
                     <CardContent className="space-y-4">
                         {user && (
                             <>
-                                <div className="flex items-center justify-between space-x-4">
+                                <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4">
                                     <div>
                                         <p className="text-blue-600">
-                                            <strong className="text-gray-500">Name</strong> {user2.name}
+                                            <strong className="text-gray-500">Name:</strong> {user.name}
                                         </p>
                                         <p className="text-blue-600">
-                                            <strong className="text-gray-500">Age:</strong> {user2.age} years
+                                            <strong className="text-gray-500">Age:</strong> {user.age} years
                                         </p>
                                         <p className="text-blue-600">
-                                            <strong className="text-gray-500">Email:</strong> {user2.email}
+                                            <strong className="text-gray-500">Email:</strong> {user.email}
                                         </p>
                                     </div>
-                                    <div className="relative w-[100px] h-[100px] flex items-center justify-center rounded-full bg-gray-200 border-4 border-blue-500">
+                                    <div className="relative w-[80px] h-[80px] md:w-[100px] md:h-[100px] flex items-center justify-center rounded-full bg-gray-200 border-4 border-blue-500">
                                         <Image
                                             src={user.avatarUrl}
                                             alt="User Avatar"
@@ -104,7 +104,7 @@ const ProfilePage: React.FC = () => {
                                     </div>
                                 </div>
                                 <Button
-                                    className="mt-4 bg-blue-600 hover:bg-blue-700"
+                                    className="mt-4 bg-blue-600 hover:bg-blue-700 w-full md:w-auto"
                                     onClick={() => router.push('/settings/user')}
                                 >
                                     Edit Profile
@@ -123,20 +123,19 @@ const ProfilePage: React.FC = () => {
                             pets.map((pet) => (
                                 <Modal key={pet.id}>
                                     <ModalTrigger>
-                                        {/* Circle-styled avatar with background border */}
-                                        <div className="relative inline-block cursor-pointer w-[100px] h-[100px] flex items-center justify-center rounded-full bg-gray-200 border-4 border-blue-500">
+                                        <div className="relative inline-block cursor-pointer w-[80px] h-[80px] md:w-[100px] md:h-[100px] flex items-center justify-center rounded-full bg-gray-200 border-4 border-blue-500">
                                             <Image
-                                                src="https://img.freepik.com/premium-photo/wallpaper-illustration_1137879-189707.jpg"
+                                                src="https://thumbs.dreamstime.com/b/connecting-natural-world-elements-cycles-nature-to-experience-sacredness-beauty-oneness-all-living-beings-t-321314003.jpg"
                                                 alt={pet.name}
-                                                width={200}
-                                                height={200}
+                                                width={400}
+                                                height={400}
                                                 className="rounded-full object-cover"
                                             />
                                         </div>
                                     </ModalTrigger>
-                                    <ModalBody className='py-6 px-4'>
-                                        <div className="flex flex-row justify-between space-y-4">
-                                            <div>
+                                    <ModalBody className="py-6 px-4 space-y-4">
+                                        <div className="flex flex-col md:flex-row md:justify-between">
+                                        <div>
                                                 <h3 className="text-xl text-blue-700 font-bold">{pet.name}</h3>
                                                 <p className="text-blue-600">
                                                     <strong className="text-gray-500">Breed:</strong> {pet.breed}
@@ -160,18 +159,22 @@ const ProfilePage: React.FC = () => {
                                                     <strong className="text-gray-500">Energy Level:</strong> energy level
                                                 </p>
                                             </div>
-                                            <div className='py-5 px-4'>
-                                                <div className="relative w-[400px] h-[400px] flex items-center justify-center rounded-full bg-gray-200 border-4 border-blue-500">
-                                                    <Image
-                                                        src="https://img.freepik.com/premium-photo/wallpaper-illustration_1137879-189707.jpg"
-                                                        alt={pet.name}
-                                                        width={400}
-                                                        height={400}
-                                                        className="rounded-full object-cover"
-                                                    />
-                                                </div>
+                                            <div className="flex justify-center mt-4 md:mt-0 md:w-[200px]">
+                                                <Image
+                                                    src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_640.jpg"
+                                                    alt={pet.name}
+                                                    width={200}
+                                                    height={200}
+                                                    className="rounded-full object-cover"
+                                                />
                                             </div>
                                         </div>
+                                        <Button
+                                            className="mt-4 bg-blue-600 hover:bg-blue-700 w-full md:w-auto"
+                                            onClick={() => router.push('/settings/pets')}
+                                        >
+                                            Edit Details...
+                                        </Button>
                                     </ModalBody>
                                 </Modal>
                             ))
@@ -181,7 +184,6 @@ const ProfilePage: React.FC = () => {
                     </CardContent>
                 </Card>
 
-                {/* Add Pet Button */}
                 <div className="fixed bottom-4 right-4">
                     <Button
                         variant="default"

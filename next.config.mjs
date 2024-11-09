@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export",
+  reactStrictMode: true, //using server side rendering
+  // output: "export",
   images: { unoptimized: true }
 };
 
