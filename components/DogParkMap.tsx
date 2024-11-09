@@ -15,23 +15,8 @@ import {
     Loader2,
     Filter
 } from 'lucide-react';
-import { Modal, ModalBody, ModalContent, ModalTrigger } from './ui/animated-modal';
-import ReactDOM from 'react-dom';
 
 
-interface ModalPortalProps {
-    children: React.ReactNode;
-}
-const ModalPortal: React.FC<ModalPortalProps> = ({ children }) => {
-    return ReactDOM.createPortal(
-            <div className="modal-overlay">
-                <div className="modal-content">
-                    {children}
-                </div>
-            </div>,
-        document.body // This renders the modal at the root of the document
-    );
-};
 
 type DogPark = {
     placeId: string;
@@ -77,7 +62,6 @@ const DogParkMap: React.FC = () => {
     //this is for modal
     const [isModalOpen, setModalOpen] = useState(false);
     const openModal = () => setModalOpen(true);
-    const closeModal = () => setModalOpen(false);
 
 
     const mapRef = useRef<google.maps.Map | null>(null);
