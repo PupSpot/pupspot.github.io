@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 'use client';
 
 import React, { useState } from 'react';
@@ -22,7 +24,6 @@ interface PetSettingsState {
     vaccinated: boolean;
     spayedNeutered: boolean;
 }
-
 const SettingsPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
