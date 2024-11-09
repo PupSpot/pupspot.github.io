@@ -24,7 +24,7 @@ type DogPark = {
     vicinity?: string;
     userRatingsTotal?: number;
     openingHours?: {
-        isOpen: boolean;
+        isOpen: boolean | undefined;
         periods?: google.maps.places.PlaceOpeningHoursPeriod[];
     };
     photos?: google.maps.places.PlacePhoto[];
@@ -125,7 +125,7 @@ const DogParkMap: React.FC = () => {
                 (result, status) => {
                     if (status === google.maps.places.PlacesServiceStatus.OK && result) {
                         resolve({
-                            openingHours: result.opening_hours,
+                            openingHours: result.opening_hours ? { isOpen: result.opening_hours.isOpen() ?? false, periods: result.opening_hours.periods } : undefined,
                             photos: result.photos,
                             reviews: result.reviews
                         });
@@ -195,7 +195,7 @@ const DogParkMap: React.FC = () => {
                             setTimeout(() => {
                                 pagination.nextPage();
                                 resolve();
-                            }, 2000); // Respect Google Maps API rate limits
+                            }, 2000);
                         } else {
                             resolve();
                         }
