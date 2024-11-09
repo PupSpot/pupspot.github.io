@@ -311,6 +311,8 @@ const AuthPages = () => {
                     <div className="flex items-center justify-center mb-2">
                         <Image
                             src="/favicon.webp"
+                            width={32}
+                            height={32}
                             alt="PupSpot Logo"
                             className="h-8 w-8"
                         />
