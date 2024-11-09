@@ -3,7 +3,18 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
 import { Card } from '@/components/ui/card';
-import { MapPin, Navigation, Star, Users, Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+    MapPin,
+    Navigation,
+    Star,
+    Users,
+    Clock,
+    ChevronLeft,
+    ChevronRight,
+    Loader2,
+    Filter
+} from 'lucide-react';
 
 type DogPark = {
     placeId: string;
@@ -27,16 +38,19 @@ type Location = {
 
 const DEFAULT_CENTER = { lat: 38.89511, lng: -77.03637 };
 const DEFAULT_ZOOM = 12;
+const RESULTS_PER_PAGE = 30;
 
 const DogParkMap: React.FC = () => {
     const mapContainerStyle = { width: '100%', height: '700px' };
     const [dogParks, setDogParks] = useState<DogPark[]>([]);
+    const [displayedParks, setDisplayedParks] = useState<DogPark[]>([]);
     const [selectedPark, setSelectedPark] = useState<DogPark | null>(null);
     const [userLocation, setUserLocation] = useState<Location | null>(null);
     const [initialLocationSet, setInitialLocationSet] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [parkCount, setParkCount] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [filterRating, setFilterRating] = useState(0);
     const [markerIcons, setMarkerIcons] = useState<{
         user: google.maps.Symbol | null;
         dogPark: google.maps.Symbol | null;
@@ -45,6 +59,8 @@ const DogParkMap: React.FC = () => {
     const mapRef = useRef<google.maps.Map | null>(null);
     const lastFetchPositionRef = useRef<Location | null>(null);
     const searchDebounceRef = useRef<NodeJS.Timeout>();
+
+    const totalPages = Math.ceil(dogParks.length / RESULTS_PER_PAGE);
 
     const initializeMarkerIcons = useCallback(() => {
         if (window.google) {
@@ -91,7 +107,14 @@ const DogParkMap: React.FC = () => {
         }
     }, [initialLocationSet]);
 
-    const getPlaceDetails = useCallback((placeId: string, map: google.maps.Map): Promise<Partial<DogPark>> => {
+    useEffect(() => {
+        const filtered = dogParks.filter(park => !filterRating || (park.rating || 0) >= filterRating);
+        const startIndex = (currentPage - 1) * RESULTS_PER_PAGE;
+        const endIndex = startIndex + RESULTS_PER_PAGE;
+        setDisplayedParks(filtered.slice(startIndex, endIndex));
+    }, [currentPage, dogParks, filterRating]);
+
+    const getPlaceDetails = useCallback(async (placeId: string, map: google.maps.Map): Promise<Partial<DogPark>> => {
         return new Promise((resolve) => {
             const service = new google.maps.places.PlacesService(map);
             service.getDetails(
@@ -122,9 +145,7 @@ const DogParkMap: React.FC = () => {
         if (!center) return 5000;
 
         const ne = bounds.getNorthEast();
-        const sw = bounds.getSouthWest();
-
-        const R = 6371e3; // Earth's radius in meters
+        const R = 6371e3;
         const φ1 = center.lat() * Math.PI / 180;
         const φ2 = ne.lat() * Math.PI / 180;
         const Δφ = (ne.lat() - center.lat()) * Math.PI / 180;
@@ -135,7 +156,7 @@ const DogParkMap: React.FC = () => {
             Math.sin(Δλ/2) * Math.sin(Δλ/2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-        return R * c;
+        return Math.min(R * c, 50000); // Cap at 50km
     }, []);
 
     const fetchDogParks = useCallback(async (map: google.maps.Map) => {
@@ -154,42 +175,65 @@ const DogParkMap: React.FC = () => {
         setIsLoading(true);
         lastFetchPositionRef.current = currentPosition;
 
-        const request = {
-            location: center,
-            radius,
-            keyword: 'dog park',
+        const service = new google.maps.places.PlacesService(map);
+        const allResults: google.maps.places.PlaceResult[] = [];
+
+        const searchInRadius = (token?: string): Promise<void> => {
+            return new Promise((resolve) => {
+                const request: google.maps.places.PlaceSearchRequest = {
+                    location: center,
+                    radius,
+                    keyword: 'dog park',
+                    ...(token && { pageToken: token })
+                };
+
+                service.nearbySearch(request, async (results, status, pagination) => {
+                    if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+                        allResults.push(...results);
+
+                        if (pagination && pagination.hasNextPage && allResults.length < 60) {
+                            setTimeout(() => {
+                                pagination.nextPage();
+                                resolve();
+                            }, 2000); // Respect Google Maps API rate limits
+                        } else {
+                            resolve();
+                        }
+                    } else {
+                        resolve();
+                    }
+                });
+            });
         };
 
-        const service = new google.maps.places.PlacesService(map);
-        service.nearbySearch(request, async (results, status) => {
-            if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-                const parksWithDetails = await Promise.all(
-                    results.map(async (result) => {
-                        const details = await getPlaceDetails(result.place_id!, map);
-                        return {
-                            placeId: result.place_id!,
-                            name: result.name!,
-                            position: {
-                                lat: result.geometry!.location!.lat(),
-                                lng: result.geometry!.location!.lng(),
-                            },
-                            rating: result.rating,
-                            vicinity: result.vicinity,
-                            userRatingsTotal: result.user_ratings_total,
-                            ...details
-                        };
-                    })
-                );
-                setDogParks(parksWithDetails);
-                setParkCount(parksWithDetails.length);
-            } else if (status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
-                setDogParks([]);
-                setParkCount(0);
-            } else {
-                setError('Failed to fetch dog parks. Please try again.');
-            }
+        try {
+            await searchInRadius();
+
+            const parksWithDetails = await Promise.all(
+                allResults.map(async (result) => {
+                    const details = await getPlaceDetails(result.place_id!, map);
+                    return {
+                        placeId: result.place_id!,
+                        name: result.name!,
+                        position: {
+                            lat: result.geometry!.location!.lat(),
+                            lng: result.geometry!.location!.lng(),
+                        },
+                        rating: result.rating,
+                        vicinity: result.vicinity,
+                        userRatingsTotal: result.user_ratings_total,
+                        ...details
+                    };
+                })
+            );
+
+            setDogParks(parksWithDetails);
+            setCurrentPage(1);
+        } catch (err) {
+            setError('Failed to fetch dog parks. Please try again.');
+        } finally {
             setIsLoading(false);
-        });
+        }
     }, [getPlaceDetails, calculateVisibleRadius]);
 
     const debouncedFetchDogParks = useCallback((map: google.maps.Map) => {
@@ -225,18 +269,60 @@ const DogParkMap: React.FC = () => {
         <div className="space-y-4">
             <Card className="p-4 bg-white shadow-md">
                 <div className="flex flex-wrap gap-4 items-center justify-between">
-                    <button
-                        onClick={centerOnUser}
-                        disabled={!userLocation}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-md disabled:opacity-50 hover:bg-blue-600 transition-colors"
-                    >
-                        <Navigation className="w-4 h-4" />
-                        Center on My Location
-                    </button>
-                    <div className="flex items-center gap-2 text-sm font-medium text-gray-600">
-                        <MapPin className="w-4 h-4" />
-                        Found {parkCount} dog parks
-                        {isLoading && <span className="ml-2">Loading...</span>}
+                    <div className="flex gap-2">
+                        <Button
+                            onClick={centerOnUser}
+                            disabled={!userLocation}
+                            className="flex items-center gap-2"
+                            variant="default"
+                        >
+                            <Navigation className="w-4 h-4" />
+                            Center on My Location
+                        </Button>
+                        <div className="flex items-center gap-2 bg-gray-100 rounded-md px-4 py-2">
+                            <Filter className="w-4 h-4 text-gray-600" />
+                            <select
+                                value={filterRating}
+                                onChange={(e) => setFilterRating(Number(e.target.value))}
+                                className="bg-transparent border-none focus:outline-none"
+                            >
+                                <option value={0}>All Ratings</option>
+                                <option value={4}>4+ Stars</option>
+                                <option value={4.5}>4.5+ Stars</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                            <MapPin className="w-4 h-4" />
+                            Found {dogParks.length} dog parks
+                            {isLoading && (
+                                <Loader2 className="w-4 h-4 animate-spin ml-2" />
+                            )}
+                        </div>
+                        {totalPages > 1 && (
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                    disabled={currentPage === 1}
+                                >
+                                    <ChevronLeft className="w-4 h-4" />
+                                </Button>
+                                <span className="text-sm font-medium">
+                                    Page {currentPage} of {totalPages}
+                                </span>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                    disabled={currentPage === totalPages}
+                                >
+                                    <ChevronRight className="w-4 h-4" />
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </div>
                 {error && (
@@ -265,6 +351,11 @@ const DogParkMap: React.FC = () => {
                                 featureType: 'water',
                                 elementType: 'geometry',
                                 stylers: [{ color: '#c9e2f3' }]
+                            },
+                            {
+                                featureType: 'landscape',
+                                elementType: 'geometry',
+                                stylers: [{ color: '#f5f5f5' }]
                             }
                         ]
                     }}
@@ -277,7 +368,7 @@ const DogParkMap: React.FC = () => {
                         />
                     )}
 
-                    {dogParks.map((park) => (
+                    {displayedParks.map((park) => (
                         <Marker
                             key={park.placeId}
                             position={park.position}
@@ -302,26 +393,57 @@ const DogParkMap: React.FC = () => {
                                 )}
                                 <div className="flex items-center gap-2 text-sm mb-2">
                                     <Clock className="w-4 h-4 text-gray-600" />
-                                    <span>{formatOpeningHours(selectedPark)}</span>
+                                    <span className={`${selectedPark.openingHours?.isOpen ? 'text-green-600' : 'text-red-600'} font-medium`}>
+                                        {formatOpeningHours(selectedPark)}
+                                    </span>
                                 </div>
                                 {selectedPark.rating && (
                                     <div className="flex items-center gap-2 text-sm mb-2">
                                         <Star className="w-4 h-4 text-yellow-500" />
-                                        <span>{selectedPark.rating}/5</span>
+                                        <span className="font-medium">{selectedPark.rating.toFixed(1)}/5</span>
                                         {selectedPark.userRatingsTotal && (
                                             <span className="flex items-center gap-1 text-gray-600">
                                                 <Users className="w-4 h-4" />
-                                                {selectedPark.userRatingsTotal}
+                                                {selectedPark.userRatingsTotal.toLocaleString()} reviews
                                             </span>
                                         )}
                                     </div>
                                 )}
                                 {selectedPark.photos && selectedPark.photos.length > 0 && (
-                                    <img
-                                        src={selectedPark.photos[0].getUrl()}
-                                        alt={selectedPark.name}
-                                        className="w-full h-32 object-cover rounded-md mt-2"
-                                    />
+                                    <div className="mt-3 space-y-2">
+                                        <img
+                                            src={selectedPark.photos[0].getUrl()}
+                                            alt={selectedPark.name}
+                                            className="w-full h-32 object-cover rounded-md shadow-sm"
+                                        />
+                                    </div>
+                                )}
+                                {selectedPark.reviews && selectedPark.reviews.length > 0 && (
+                                    <div className="mt-3">
+                                        <h5 className="font-medium text-sm mb-2">Latest Review</h5>
+                                        <div className="bg-gray-50 p-2 rounded-md text-sm">
+                                            <div className="flex items-center gap-1 mb-1">
+                                                <Star className="w-3 h-3 text-yellow-500" />
+                                                <span className="font-medium">{selectedPark.reviews[0].rating}/5</span>
+                                                <span className="text-gray-500 text-xs ml-2">
+                                                    {new Date(selectedPark.reviews[0].time * 1000).toLocaleDateString()}
+                                                </span>
+                                            </div>
+                                            <p className="text-gray-700 line-clamp-3">{selectedPark.reviews[0].text}</p>
+                                        </div>
+                                    </div>
+                                )}
+                                {mapRef.current && (
+                                    <div className="mt-3">
+                                        <a
+                                            href={`https://www.google.com/maps/dir/?api=1&destination=${selectedPark.position.lat},${selectedPark.position.lng}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="block w-full text-center bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md text-sm transition-colors"
+                                        >
+                                            Get Directions
+                                        </a>
+                                    </div>
                                 )}
                             </div>
                         </InfoWindow>
