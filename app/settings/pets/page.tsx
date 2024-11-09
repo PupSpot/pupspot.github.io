@@ -102,7 +102,7 @@ const SettingsPage: React.FC = () => {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-2xl font-bold text-blue-600">Change your pet information :</CardTitle>
+                        <CardTitle className="text-2xl font-bold text-blue-600">Change Your Pet Information :</CardTitle>
                     </CardHeader>
                     <CardContent>
                         {error && (

@@ -15,6 +15,23 @@ import {
     Loader2,
     Filter
 } from 'lucide-react';
+import { Modal, ModalBody, ModalContent, ModalTrigger } from './ui/animated-modal';
+import ReactDOM from 'react-dom';
+
+
+interface ModalPortalProps {
+    children: React.ReactNode;
+}
+const ModalPortal: React.FC<ModalPortalProps> = ({ children }) => {
+    return ReactDOM.createPortal(
+            <div className="modal-overlay">
+                <div className="modal-content">
+                    {children}
+                </div>
+            </div>,
+        document.body // This renders the modal at the root of the document
+    );
+};
 
 type DogPark = {
     placeId: string;
@@ -55,6 +72,13 @@ const DogParkMap: React.FC = () => {
         user: google.maps.Symbol | null;
         dogPark: google.maps.Symbol | null;
     }>({ user: null, dogPark: null });
+
+
+    //this is for modal
+    const [isModalOpen, setModalOpen] = useState(false);
+    const openModal = () => setModalOpen(true);
+    const closeModal = () => setModalOpen(false);
+
 
     const mapRef = useRef<google.maps.Map | null>(null);
     const lastFetchPositionRef = useRef<Location | null>(null);
@@ -419,19 +443,7 @@ const DogParkMap: React.FC = () => {
                                     </div>
                                 )}
                                 {selectedPark.reviews && selectedPark.reviews.length > 0 && (
-                                    <div className="mt-3">
-                                        <h5 className="font-medium text-sm mb-2">Latest Review</h5>
-                                        <div className="bg-gray-50 p-2 rounded-md text-sm">
-                                            <div className="flex items-center gap-1 mb-1">
-                                                <Star className="w-3 h-3 text-yellow-500" />
-                                                <span className="font-medium">{selectedPark.reviews[0].rating}/5</span>
-                                                <span className="text-gray-500 text-xs ml-2">
-                                                    {new Date(selectedPark.reviews[0].time * 1000).toLocaleDateString()}
-                                                </span>
-                                            </div>
-                                            <p className="text-gray-700 line-clamp-3">{selectedPark.reviews[0].text}</p>
-                                        </div>
-                                    </div>
+                                    <button onClick={openModal}>Click To View The Reviews</button>
                                 )}
                                 {mapRef.current && (
                                     <div className="mt-3">
