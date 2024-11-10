@@ -26,7 +26,6 @@ import {
     ChevronLeft,
     ChevronRight,
     Loader2,
-    Filter,
     Share2,
     Maximize2,
     Search
@@ -34,6 +33,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useDebounce } from 'use-debounce';
+import Image from "next/image";
 
 interface DogPark {
     placeId: string;
@@ -60,6 +60,7 @@ interface Location {
 const DEFAULT_CENTER = { lat: 38.89511, lng: -77.03637 };
 const DEFAULT_ZOOM = 12;
 const RESULTS_PER_PAGE = 30;
+const libraries: ('places' | 'drawing' | 'geometry' | 'visualization')[] = ['places'];
 
 const DogParkMap: React.FC = () => {
     const [mapSize, setMapSize] = useState({ width: '100%', height: '700px' });
@@ -359,10 +360,12 @@ const DogParkMap: React.FC = () => {
                     {park.reviews?.map((review, index) => (
                         <div key={index} className="border-b pb-4">
                             <div className="flex items-center gap-2 mb-2">
-                                <img
+                                <Image
                                     src={review.profile_photo_url}
                                     alt={review.author_name}
                                     className="w-8 h-8 rounded-full"
+                                    width={32}
+                                    height={32}
                                 />
                                 <div>
                                     <p className="font-medium">{review.author_name}</p>
@@ -484,7 +487,7 @@ const DogParkMap: React.FC = () => {
 
             <LoadScript
                 googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}
-                libraries={['places']}
+                libraries={libraries}
             >
                 <div style={mapSize} className="relative">
                     <GoogleMap
@@ -577,10 +580,12 @@ const DogParkMap: React.FC = () => {
                                     )}
                                     {selectedPark.photos && selectedPark.photos.length > 0 && (
                                         <div className="mt-3 space-y-2">
-                                            <img
+                                            <Image
                                                 src={selectedPark.photos[0].getUrl()}
                                                 alt={selectedPark.name}
                                                 className="w-full h-32 object-cover rounded-md shadow-sm"
+                                                width={400}
+                                                height={200}
                                             />
                                         </div>
                                     )}
