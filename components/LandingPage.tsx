@@ -167,13 +167,13 @@ const FeaturesSection = () => (
                             icon: <Users className="h-8 w-8 text-blue-500" />,
                             title: "Dog Community",
                             description: "Connect with local dog owners and arrange playdates",
-                            link: "/community"
+                            link: "/events"
                         },
                         {
                             icon: <MapPin className="h-8 w-8 text-blue-500" />,
                             title: "Find Spots",
                             description: "Discover dog-friendly parks, cafes, and more nearby",
-                            link: "/spots"
+                            link: "/discover"
                         },
                         {
                             icon: <Calendar className="h-8 w-8 text-blue-500" />,
@@ -185,7 +185,7 @@ const FeaturesSection = () => (
                             icon: <PawPrint className="h-8 w-8 text-blue-500" />,
                             title: "Pet Profiles",
                             description: "Create profiles for your dogs and share their adventures",
-                            link: "/pets"
+                            link: "/settings/pets"
                         }
                     ].map((feature, index) => (
                         <motion.div
