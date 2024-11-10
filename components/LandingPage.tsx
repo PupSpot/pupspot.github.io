@@ -86,9 +86,6 @@ const Navigation = () => {
                             <Link href="/events" className="block px-3 py-2 text-gray-600 hover:bg-blue-50 rounded-md">
                                 Events
                             </Link>
-                            <Link href="/community" className="block px-3 py-2 text-gray-600 hover:bg-blue-50 rounded-md">
-                                Community
-                            </Link>
                             <Button className="w-full mt-2 bg-blue-600 hover:bg-blue-700">
                                 Sign In
                             </Button>
