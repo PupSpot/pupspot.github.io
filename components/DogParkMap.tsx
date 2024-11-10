@@ -28,12 +28,15 @@ import {
     Loader2,
     Share2,
     Maximize2,
-    Search
+    Search,
+    Home
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useDebounce } from 'use-debounce';
 import Image from "next/image";
+import router from 'next/router';
+import Link from 'next/link';
 
 interface DogPark {
     placeId: string;
@@ -478,6 +481,11 @@ const DogParkMap: React.FC = () => {
                                 </Button>
                             </div>
                         )}
+                        <Link href="/" passHref>
+                            <Button variant="default" className="flex items-center gap-2">
+                                <Home className="w-4 h-4" />
+                            </Button>
+                        </Link>
                     </div>
                 </div>
                 {error && (
