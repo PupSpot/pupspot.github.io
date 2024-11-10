@@ -125,9 +125,11 @@ const HeroSection = () => (
                     variants={fadeIn}
                     className="flex flex-col sm:flex-row justify-center gap-4"
                 >
-                    <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-                        Join Now <ChevronRight className="ml-2 h-4 w-4" />
-                    </Button>
+                    <Link href="/authentication">
+                        <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+                            Join Now <ChevronRight className="ml-2 h-4 w-4" />
+                        </Button>
+                    </Link>
                 </motion.div>
             </motion.div>
         </div>
