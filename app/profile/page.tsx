@@ -114,7 +114,7 @@ const ProfilePage: React.FC = () => {
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="relative">
                     <CardHeader>
                         <CardTitle className="text-2xl text-blue-500 font-bold">Pet Details</CardTitle>
                     </CardHeader>
@@ -125,7 +125,7 @@ const ProfilePage: React.FC = () => {
                                     <ModalTrigger>
                                         <div className="relative inline-block cursor-pointer w-[80px] h-[80px] md:w-[100px] md:h-[100px] flex items-center justify-center rounded-full bg-gray-200 border-4 border-blue-500">
                                             <Image
-                                                src="https://thumbs.dreamstime.com/b/connecting-natural-world-elements-cycles-nature-to-experience-sacredness-beauty-oneness-all-living-beings-t-321314003.jpg"
+                                                src={pet.avatar}
                                                 alt={pet.name}
                                                 width={400}
                                                 height={400}
@@ -135,7 +135,7 @@ const ProfilePage: React.FC = () => {
                                     </ModalTrigger>
                                     <ModalBody className="py-6 px-4 space-y-4">
                                         <div className="flex flex-col md:flex-row md:justify-between">
-                                        <div>
+                                            <div>
                                                 <h3 className="text-xl text-blue-700 font-bold">{pet.name}</h3>
                                                 <p className="text-blue-600">
                                                     <strong className="text-gray-500">Breed:</strong> {pet.breed}
@@ -182,18 +182,20 @@ const ProfilePage: React.FC = () => {
                             <p>No pets found.</p>
                         )}
                     </CardContent>
+                    {/* Plus icon positioned in the bottom-right corner */}
+                    <div className="absolute bottom-4 right-4">
+                        <Button
+                            variant="default"
+                            size="lg"
+                            onClick={() => router.push('/pets')}
+                            className="rounded-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center p-4 shadow-lg"
+                        >
+                            <Plus className="h-8 w-8 text-white" />
+                        </Button>
+                    </div>
                 </Card>
 
-                <div className="fixed bottom-4 right-4">
-                    <Button
-                        variant="default"
-                        size="lg"
-                        onClick={() => router.push('/pets')}
-                        className="rounded-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center p-4 shadow-lg"
-                    >
-                        <Plus className="h-8 w-8 text-white" />
-                    </Button>
-                </div>
+
             </div>
         </div>
     );
