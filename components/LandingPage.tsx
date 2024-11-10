@@ -55,9 +55,6 @@ const Navigation = () => {
                         <Link href="/events" className="text-gray-600 hover:text-blue-600 transition-colors">
                             Events
                         </Link>
-                        <Link href="/community" className="text-gray-600 hover:text-blue-600 transition-colors">
-                            Community
-                        </Link>
                         <Link href="/authentication">
                             <Button className="bg-blue-600 hover:bg-blue-700">
                                 Sign In
