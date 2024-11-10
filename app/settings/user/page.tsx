@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Camera, ArrowLeft, Eye, EyeOff } from 'lucide-react';  // Added Eye and EyeOff icons
+import { Camera, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import Image from "next/image";
 
 interface UserProfileSettingsState {
@@ -29,14 +29,14 @@ const ProfileSettingsPage: React.FC = () => {
         avatarUrl: null,
         password: ''
     });
-    const [passwordVisible, setPasswordVisible] = useState(false);  // State for password visibility toggle
+    const [confirmPassword, setConfirmPassword] = useState(''); // State for confirm password
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false); // State for confirm password visibility toggle
 
-    // Fetch user profile data on page load
     useEffect(() => {
         const fetchProfileData = async () => {
             setIsLoading(true);
             try {
-                // Fetch the user data from your backend or API
                 const data = {
                     name: "arka",
                     email: "email@12",
@@ -45,13 +45,12 @@ const ProfileSettingsPage: React.FC = () => {
                     avatarUrl: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_640.jpg",
                 };
 
-                // Update the state with the fetched data
                 setProfileSettings({
                     name: data.name,
                     email: data.email,
                     age: data.age,
                     avatarUrl: data.avatarUrl,
-                    password: data.password // Don't pre-populate password for security reasons
+                    password: '' // Leave password blank for security
                 });
             } catch (err) {
                 setError('Failed to load profile data. Please try again.');
@@ -81,6 +80,12 @@ const ProfileSettingsPage: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+
+        if (profileSettings.password !== confirmPassword) {
+            setError('Passwords do not match');
+            return;
+        }
+
         setIsLoading(true);
 
         try {
@@ -96,7 +101,6 @@ const ProfileSettingsPage: React.FC = () => {
 
             console.log('Profile settings updated successfully:', profileSettings);
             console.log("data to be sent", formData);
-            // Here you would send the `formData` to your server to update the profile
         } catch (err) {
             setError('Failed to update profile settings. Please try again.');
         } finally {
@@ -128,7 +132,6 @@ const ProfileSettingsPage: React.FC = () => {
                         )}
 
                         <form onSubmit={handleSubmit} className="space-y-6">
-                            {/* Avatar Upload */}
                             <div className="flex justify-center">
                                 <div className="relative">
                                     <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center border-2 border-dashed border-gray-300">
@@ -173,7 +176,6 @@ const ProfileSettingsPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Profile Details */}
                             {['name', 'email', 'age'].map((field) => (
                                 <div className="space-y-2" key={field}>
                                     <Label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</Label>
@@ -186,23 +188,42 @@ const ProfileSettingsPage: React.FC = () => {
                                 </div>
                             ))}
 
-                            {/* Password Field */}
                             <div className="space-y-2 relative">
                                 <Label htmlFor="password">New Password</Label>
                                 <Input
                                     id="password"
                                     name="password"
-                                    type={passwordVisible ? 'text' : 'password'}  // Toggle password visibility
+                                    type={passwordVisible ? 'text' : 'password'}
                                     value={profileSettings.password}
                                     onChange={handleInputChange}
                                     placeholder="Enter a new password"
                                 />
                                 <Button
                                     type="button"
-                                    className="absolute right-2 top-1/2 transform -translate-y-1/4 translate-x-1/3"
-                                    onClick={() => setPasswordVisible(!passwordVisible)}  // Toggle visibility
+                                    className="absolute right-2 top-2/3 transform -translate-y-2/3"
+                                    onClick={() => setPasswordVisible(!passwordVisible)}
                                 >
                                     {passwordVisible ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                </Button>
+                            </div>
+
+                            {/* Confirm Password Field */}
+                            <div className="space-y-2 relative">
+                                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                                <Input
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    type={confirmPasswordVisible ? 'text' : 'password'}
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    placeholder="Re-enter the new password"
+                                />
+                                <Button
+                                    type="button"
+                                    className="absolute right-2 top-2/3 transform -translate-y-2/3"
+                                    onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
+                                >
+                                    {confirmPasswordVisible ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                 </Button>
                             </div>
 
