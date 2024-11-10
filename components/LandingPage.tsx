@@ -263,18 +263,18 @@ const Footer = () => (
                     <h4 className="text-white font-semibold mb-4">Features</h4>
                     <ul className="space-y-2 text-sm">
                         <li><Link href="/discover" className="hover:text-blue-400">Find Dog Parks</Link></li>
-                        <li><Link href="/places" className="hover:text-blue-400">Pet-friendly Places</Link></li>
+                        <li><Link href="/discover" className="hover:text-blue-400">Pet-friendly Places</Link></li>
                         <li><Link href="/events" className="hover:text-blue-400">Dog Events</Link></li>
-                        <li><Link href="/community" className="hover:text-blue-400">Community</Link></li>
+                        <li><Link href="/events" className="hover:text-blue-400">Community</Link></li>
                     </ul>
                 </div>
                 <div>
                     <h4 className="text-white font-semibold mb-4">Company</h4>
                     <ul className="space-y-2 text-sm">
-                        <li><Link href="/about" className="hover:text-blue-400">About Us</Link></li>
-                        <li><Link href="/contact" className="hover:text-blue-400">Contact</Link></li>
-                        <li><Link href="/privacy" className="hover:text-blue-400">Privacy Policy</Link></li>
-                        <li><Link href="/terms" className="hover:text-blue-400">Terms of Service</Link></li>
+                        <li><Link href="#" className="hover:text-blue-400">About Us</Link></li>
+                        <li><Link href="mailto:support@pupspot.com" className="hover:text-blue-400">Contact</Link></li>
+                        <li><Link href="/privacypolicy" className="hover:text-blue-400">Privacy Policy</Link></li>
+                        <li><Link href="/privacypolicy" className="hover:text-blue-400">Terms of Service</Link></li>
                     </ul>
                 </div>
             </div>
