@@ -55,7 +55,7 @@ const Navigation = () => {
                         <Link href="/events" className="text-gray-600 hover:text-blue-600 transition-colors">
                             Events
                         </Link>
-                        <Link href="/authentication">
+                        <Link href="/api/auth/login">
                             <Button className="bg-blue-600 hover:bg-blue-700">
                                 Sign In
                             </Button>
@@ -125,7 +125,7 @@ const HeroSection = () => (
                     variants={fadeIn}
                     className="flex flex-col sm:flex-row justify-center gap-4"
                 >
-                    <Link href="/authentication">
+                    <Link href="/api/auth/login">
                         <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
                             Join Now <ChevronRight className="ml-2 h-4 w-4" />
                         </Button>
@@ -233,7 +233,7 @@ const CTASection = () => (
             </motion.p>
             <motion.div variants={fadeIn}>
                 <motion.div whileHover={{scale: 1.05}} whileTap={{scale: 0.95}}>
-                    <Link href="/authentication">
+                    <Link href="/api/auth/login">
                         <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
                             Sign Up Now <ChevronRight className="ml-2 h-4 w-4" />
                         </Button>
