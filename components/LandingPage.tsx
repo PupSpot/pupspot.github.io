@@ -3,10 +3,11 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { PawPrint, MapPin, Users, Calendar, ChevronRight, Menu } from 'lucide-react';
+import { PawPrint, MapPin, Users, Calendar, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-// import { UserProvider } from '@auth0/nextjs-auth0/client';
+import { useUser } from '@auth0/nextjs-auth0/client';
+import { useEffect, useState } from 'react';
 
 // Animation configurations
 const fadeIn = {
@@ -20,43 +21,43 @@ const staggerContainer = {
 };
 
 // Navigation Component
-import { useUser } from '@auth0/nextjs-auth0/client';
+export function Navigation() {
+  const { user, isLoading } = useUser();
+  const [mounted, setMounted] = useState(false);
 
-// Navigation Component
-// LandingPage.tsx Navigation component
-const Navigation = () => {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const { user, isLoading, error } = useUser();
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
+  useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (error) return <div>Error loading user</div>;
+  // Don't render anything until client-side
+  if (!mounted) {
+    return null; // or a loading skeleton
+  }
 
-  const authButton = mounted && !isLoading && (
-    user ? (
-      <Link href="/api/auth/logout" prefetch={false}>
-        <Button className="bg-blue-600 hover:bg-blue-700">
-          Logout
-        </Button>
-      </Link>
-    ) : (
-      <Link href="/api/auth/login" prefetch={false}>
-        <Button className="bg-blue-600 hover:bg-blue-700">
-          Sign In
-        </Button>
-      </Link>
-    )
+  return (
+    <nav>
+      {!isLoading && (
+        user ? (
+          <Link href="/api/auth/logout" prefetch={false}>
+            <Button className="bg-blue-600 hover:bg-blue-700">
+              Logout
+            </Button>
+          </Link>
+        ) : (
+          <Link href="/api/auth/login" prefetch={false}>
+            <Button className="bg-blue-600 hover:bg-blue-700">
+              Sign In
+            </Button>
+          </Link>
+        )
+      )}
+    </nav>
   );
-
-  // Rest of your navigation component remains the same
-};
+}
 
 // Hero Section Component
 const HeroSection = () => (
-  <div className="bg-gradient-to-b from-blue-50 to-white h-screen flex items-center">
+  <div className="bg-gradient-to-b from-blue-50 to-white h-screen flex items-center pt-16">
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <motion.div initial="initial" animate="animate" variants={staggerContainer} className="text-center">
         <motion.div variants={fadeIn} className="flex justify-center items-center mb-6">
