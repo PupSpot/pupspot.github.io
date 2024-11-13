@@ -3,11 +3,12 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { PawPrint, MapPin, Users, Calendar, ChevronRight } from 'lucide-react';
+import { PawPrint, MapPin, Users, Calendar, ChevronRight, Menu } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 // Animation configurations
 const fadeIn = {
@@ -22,37 +23,108 @@ const staggerContainer = {
 
 // Navigation Component
 export function Navigation() {
-  const { user, isLoading } = useUser();
-  const [mounted, setMounted] = useState(false);
+  const { user, isLoading } = useUser()
+  const [mounted, setMounted] = useState(false)
+  const router = useRouter()
+  const [isOpen, setIsOpen] = React.useState(false)
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    setMounted(true)
+  }, [])
 
-  // Don't render anything until client-side
-  if (!mounted) {
-    return null; // or a loading skeleton
+  const handleLogout = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    try {
+      await router.push('/api/auth/logout')
+    } catch (error) {
+      console.error('Error during logout:', error)
+    }
   }
 
+  if (!mounted) return null
+
   return (
-    <nav>
-      {!isLoading && (
-        user ? (
-          <Link href="/api/auth/logout" prefetch={false}>
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              Logout
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="fixed w-full bg-white/80 backdrop-blur-md z-50 shadow-sm"
+    >
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center space-x-2">
+              <PawPrint className="h-8 w-8 text-blue-600" />
+              <span className="text-xl font-bold text-blue-900">PupSpot</span>
+            </Link>
+          </div>
+
+          <div className="hidden md:flex items-center space-x-8">
+            <Link href="/discover" className="text-gray-600 hover:text-blue-600 transition-colors">
+              Discover
+            </Link>
+            <Link href="/events" className="text-gray-600 hover:text-blue-600 transition-colors">
+              Events
+            </Link>
+            {!isLoading && (
+              user ? (
+                <Link href="/api/auth/logout" onClick={handleLogout}>
+                  <Button className="bg-blue-600 hover:bg-blue-700">
+                    Logout
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/api/auth/login?prompt=login&returnTo=/">
+                  <Button className="bg-blue-600 hover:bg-blue-700">
+                    Sign In
+                  </Button>
+                </Link>
+              )
+            )}
+          </div>
+
+          <div className="md:hidden">
+            <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)}>
+              <Menu className="h-6 w-6" />
             </Button>
-          </Link>
-        ) : (
-          <Link href="/api/auth/login" prefetch={false}>
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              Sign In
-            </Button>
-          </Link>
-        )
-      )}
-    </nav>
-  );
+          </div>
+        </div>
+
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden"
+          >
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              <Link href="/discover" className="block px-3 py-2 text-gray-600 hover:bg-blue-50 rounded-md">
+                Discover
+              </Link>
+              <Link href="/events" className="block px-3 py-2 text-gray-600 hover:bg-blue-50 rounded-md">
+                Events
+              </Link>
+              {!isLoading && (
+                user ? (
+                  <Link href="/api/auth/logout" onClick={handleLogout}>
+                    <Button className="w-full mt-2 bg-blue-600 hover:bg-blue-700">
+                      Logout
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link href="/api/auth/login?prompt=login&returnTo=/">
+                    <Button className="w-full mt-2 bg-blue-600 hover:bg-blue-700">
+                      Sign In
+                    </Button>
+                  </Link>
+                )
+              )}
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </motion.nav>
+  )
 }
 
 // Hero Section Component
