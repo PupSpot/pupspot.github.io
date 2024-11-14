@@ -8,7 +8,10 @@ export default handleAuth({
         returnTo: '/',
         authorizationParams: {
           prompt: 'login',
-        }
+        },
+        getLoginState: () => ({
+          returnTo: '/'
+        })
       });
     } catch (error) {
       console.error(error);
